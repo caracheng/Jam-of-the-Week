@@ -23,5 +23,15 @@ def readStatus(path, malePath, femalePath):
         wr = csv.writer(nameFile, quoting=csv.QUOTE_ALL)
         wr.writerow(femaleAuthor)
 
-readStatus('facebook_statuses.csv', 'maleAuthors.csv', 'femaleAuthors.csv')
+def countNames(path):
+    numOfAuthors = 0
+    with open(path, 'rb') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            numOfAuthors = len(row)
+    print numOfAuthors
+
+#readStatus('facebook_statuses.csv', 'maleAuthors.csv', 'femaleAuthors.csv')
+#countNames('femaleAuthors.csv') # 38 unique names
+countNames('maleAuthors.csv')   #317 unique names
 
