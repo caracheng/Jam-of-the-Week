@@ -9,14 +9,13 @@ def readStatus(path, malePath, femalePath):
         reader = csv.DictReader(csvfile)
         for row in reader:
             name = row["status_author"]
-            print name
-            inferredGender = raw_input("Infer the gender of this name. Type m or f: ")
-            if inferredGender == "m":
-                if name not in maleAuthor:
-                    maleAuthor.append(name)
-            if inferredGender == "f":
-                if name not in femaleAuthor:
-                    femaleAuthor.append(name)
+            if name not in femaleAuthor and name not in maleAuthor:
+                print name
+                inferredGender = raw_input("Infer the gender of this name. Type m or f: ")
+                if inferredGender == "m":
+                        maleAuthor.append(name)
+                if inferredGender == "f":
+                        femaleAuthor.append(name)
     with open(malePath, 'wb') as nameFile:
         wr = csv.writer(nameFile, quoting=csv.QUOTE_ALL)
         wr.writerow(maleAuthor)
