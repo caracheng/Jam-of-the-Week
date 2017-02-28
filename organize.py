@@ -33,5 +33,10 @@ def countNames(path):
 
 #readStatus('facebook_statuses.csv', 'maleAuthors.csv', 'femaleAuthors.csv')
 #countNames('femaleAuthors.csv') # 38 unique names
-countNames('maleAuthors.csv')   #317 unique names
+#countNames('maleAuthors.csv')   #317 unique names
+
+# TO DO
+"""Write a function that collects all the posts by the females/males and
+counts the number of total reactions and number of specific reactions.
+Average them out by number of posts - total number of (specific) reactions / total number of male/female statuses"""
 
