@@ -4,19 +4,17 @@ import preClassify
 
 #Based off of http://www.laurentluce.com/posts/twitter-sentiment-analysis-using-python-and-nltk/
 
-
 def collectComments(path, sentiment):
     allComments = []
     with open(path, 'rb') as commentFile:
         commentsFem = csv.reader(commentFile)
         for row in commentsFem:
             for comment in row:
-                allComments.append(comment + "," + sentiment)
-    print allComments
+                tup = (comment, sentiment)
+                allComments.append(tup)
+    return allComments
 
 pos_comments = collectComments('pos_comments.csv', "positive")
-
-pos_comments
 
 sug_comments = collectComments('sug_comments.csv', "suggestive")
 
@@ -37,7 +35,7 @@ def makeComments():
 
 def get_words_in_comments(comments):
     all_words = []
-    for (words) in comments:
+    for (words, sentiment) in comments:
       all_words.extend(words)
     return all_words
 
@@ -56,8 +54,8 @@ def extract_features(document): #document/input is a single tweet/comment
     return features
 
 training_set = nltk.classify.apply_features(extract_features, makeComments())
+
 classifier = nltk.NaiveBayesClassifier.train(training_set)
 
-tweet = 'Larry is my friend'
+tweet = 'suggestion'
 print classifier.classify(extract_features(tweet.split()))
-
