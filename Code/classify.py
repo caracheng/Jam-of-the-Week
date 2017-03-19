@@ -87,10 +87,11 @@ def classifyComments(statuses, authors, comments):
 #classifyComments('facebook_statuses.csv','maleAuthors.csv', 'facebook_comments.csv' ) #{'positive': 2401, 'suggestive': 10, 'unrelated': 468}
 
 def calculateAccuracy(statuses, authors, comments):
+    """Attempting to calculate accuracy of the model"""
     avgAccuracy = 0
     commentList = preClassify.grabComments(statuses, authors, comments)
     for comment in commentList:
-        accuracy = nltk.classify.accuracy(classifier, extract_features(comment.split()))
+        accuracy = nltk.classify.accuracy(classifier, comment) #what in the world kinda format do you take in???????
         avgAccuracy += accuracy
     print avgAccuracy/len(commentList)
 
