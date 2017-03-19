@@ -5,6 +5,7 @@ import preClassify
 #Based off of http://www.laurentluce.com/posts/twitter-sentiment-analysis-using-python-and-nltk/
 
 def collectComments(path, sentiment):
+    "Collects comments from CSV and creates a list composed of a tuple (comment, sentiment) to be used in a training set"
     allComments = []
     with open(path, 'rb') as commentFile:
         commentsFem = csv.reader(commentFile)
@@ -21,6 +22,7 @@ sug_comments = collectComments('sug_comments.csv', "suggestive")
 unrelated_comments = collectComments('unrelated_comments.csv', "unrelated")
 
 def makeComments():
+    """Takes the training set and creates a single tuple list. Cleans the training set of any word smaller than 2 characters"""
     comments = []
     for (words, sentiment) in pos_comments:
         words_filtered = [e.lower() for e in words.split() if len(e) >= 3]
@@ -34,19 +36,22 @@ def makeComments():
     return comments
 
 def get_words_in_comments(comments):
+    """Creates a list of distinct words in the comments"""
     all_words = []
     for (words, sentiment) in comments:
       all_words.extend(words)
     return all_words
 
 def get_word_features(wordlist):
+    """Orders the list of words from the comments by the frequency in which they appear"""
     wordlist = nltk.FreqDist(wordlist)
     word_features = wordlist.keys()
     return word_features
 
 word_features = get_word_features(get_words_in_comments(makeComments()))
 
-def extract_features(document): #document/input is a single tweet/comment
+def extract_features(document):
+    """Takes a single comment as input and returns a a dictionary indicating what words are contained in the input passed"""
     document_words = set(document)
     features = {}
     for word in word_features:
@@ -57,5 +62,36 @@ training_set = nltk.classify.apply_features(extract_features, makeComments())
 
 classifier = nltk.NaiveBayesClassifier.train(training_set)
 
-tweet = 'suggestion'
-print classifier.classify(extract_features(tweet.split()))
+def classifyComments(statuses, authors, comments):
+    """Takes the set of comments made on male/female posts, classifies them on the classifier trained on the training set,
+    and returns a dictionary detailing how many comments were classified as positive, suggestive or unrelated"""
+    distribution = {}
+    pos = 0
+    sug = 0
+    unrelated = 0
+    commentList = preClassify.grabComments(statuses, authors, comments)
+    for comment in commentList:
+        classifiedComment = classifier.classify(extract_features(comment.split()))
+        if classifiedComment == "positive":
+            pos += 1
+        if classifiedComment == "suggestive":
+            sug += 1
+        if classifiedComment == "unrelated":
+            unrelated +=1
+    distribution["positive"] = pos
+    distribution["suggestive"] = sug
+    distribution["unrelated"] = unrelated
+    return distribution
+
+#classifyComments('facebook_statuses.csv','femaleAuthors.csv', 'facebook_comments.csv' ) #yielded {'positive': 184, 'suggestive': 0, 'unrelated': 32}
+#classifyComments('facebook_statuses.csv','maleAuthors.csv', 'facebook_comments.csv' ) #{'positive': 2401, 'suggestive': 10, 'unrelated': 468}
+
+def calculateAccuracy(statuses, authors, comments):
+    avgAccuracy = 0
+    commentList = preClassify.grabComments(statuses, authors, comments)
+    for comment in commentList:
+        accuracy = nltk.classify.accuracy(classifier, extract_features(comment.split()))
+        avgAccuracy += accuracy
+    print avgAccuracy/len(commentList)
+
+calculateAccuracy('facebook_statuses.csv','femaleAuthors.csv', 'facebook_comments.csv')

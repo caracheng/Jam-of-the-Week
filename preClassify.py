@@ -17,7 +17,7 @@ def grabStatusIDs(path, list):
     return statusID
 
 def grabComments(path, statusList, commentList):
-    """"""
+    """Grabs comments on psots made by female/male authors that are not made by themselves"""
     comments = []
     statusIDs = grabStatusIDs(path, statusList) #dictionary
     with open(commentList) as csvfile:
@@ -29,5 +29,5 @@ def grabComments(path, statusList, commentList):
     return comments
 
 
-#grabComments('facebook_statuses.csv','femaleAuthors.csv', 'facebook_comments.csv')
+grabComments('facebook_statuses.csv','femaleAuthors.csv', 'facebook_comments.csv')
 #grabStatusIDs('facebook_statuses.csv','femaleAuthors.csv')
