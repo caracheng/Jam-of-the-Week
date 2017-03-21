@@ -86,13 +86,36 @@ def classifyComments(statuses, authors, comments):
 #classifyComments('facebook_statuses.csv','femaleAuthors.csv', 'facebook_comments.csv' ) #yielded {'positive': 184, 'suggestive': 0, 'unrelated': 32}
 #classifyComments('facebook_statuses.csv','maleAuthors.csv', 'facebook_comments.csv' ) #{'positive': 2401, 'suggestive': 10, 'unrelated': 468}
 
+testCase = [("This is great work! Keep it up", 'positive'),
+            ("I think you can improve this by doing X", 'suggestive'),
+            ("You can prob feed your cat", 'unrelated'),
+            ("YOU ROCK BRO", 'positive'),
+            ("I have a few suggestions for you", 'suggestive'),
+            ("I hope you get into BLLLLOOOOOOO", 'positive'),
+            ("Nice", 'positive'),
+            ("Thanks", 'unrelated'),
+            ("You really need to work on", 'suggestive'),
+            ("That's some great jazz", 'positive'),
+            ("What can i do to get better", 'suggestive'),
+            ("What sound system do you use", "unrelated"),
+            ("You could totally rock that so much more if you just tuned your guitar a bit more", 'suggestive'),
+            ("BROOOOOO", "positive"),
+            ("DUDE", "positive"),
+            ("Thanks bro", "unrelated"),
+            ("How are you doing", "unrelated"),
+            ("Just came from Italy", "unrelated"),
+            ("How about trying this instead of that?", "suggestive")
+]
+
 def calculateAccuracy(statuses, authors, comments):
     """Attempting to calculate accuracy of the model"""
-    avgAccuracy = 0
-    commentList = preClassify.grabComments(statuses, authors, comments)
-    for comment in commentList:
-        accuracy = nltk.classify.accuracy(classifier, comment) #what in the world kinda format do you take in???????
-        avgAccuracy += accuracy
-    print avgAccuracy/len(commentList)
+    comments = []
+    for (words, sentiment) in testCase:
+        words_filtered = [e.lower() for e in words.split() if len(e) >= 3]
+        comments.append((words_filtered, sentiment))
+    wFeatures = nltk.classify.apply_features(extract_features, comments)
+    accuracy = nltk.classify.accuracy(classifier, wFeatures) #what in the world kinda format do you take in???????
+        # avgAccuracy += accuracy
+    print accuracy
 
 calculateAccuracy('facebook_statuses.csv','femaleAuthors.csv', 'facebook_comments.csv')
